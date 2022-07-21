@@ -1,3 +1,13 @@
+#ifndef HTU21_H_INCLUDED
+#define HTU21_H_INCLUDED
+
+#include "SparkFunHTU21D.h"
+
+// Humidity/temperature
+HTU21D htu21d;
+float humd, humt;
+int ihumd, ihumt;
+
 void read_htu21d() {
     // Init humidity sensor
     #ifdef DEBUG
@@ -22,3 +32,4 @@ void read_htu21d() {
     #endif
 
 }
+#endif

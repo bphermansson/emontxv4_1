@@ -1,9 +1,11 @@
-void i2cscan()
+#include <i2cscan.h>
+
+void i2cscan(int sda, int scl)
 {
-  Wire.begin();
+  Wire.begin(sda, scl);
   Serial.println("I2C Scanner");
 
-  byte error, address;
+  uint8_t error, address;
   int nDevices;
 
   Serial.println("Scanning...");
@@ -56,7 +58,7 @@ void i2cscan()
     Serial.println("No I2C devices found\n");
   }
   else {
-    Serial.println("Done.\n");
+    Serial.println("I2C scanning done.\n");
   }
 
   delay(2000);

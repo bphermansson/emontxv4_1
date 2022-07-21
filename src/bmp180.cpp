@@ -1,4 +1,14 @@
-  void bmp180() {
+ 
+// Pressure & temp
+#include <SFE_BMP180.h>
+SFE_BMP180 pressure;
+int iBMPtemp, iBMPpres;
+
+#define ALTITUDE 54.0 // Altitude of Såtenäs (my location) in meters
+char status;
+double T,P,p0,a;
+
+void bmp180() {
   // Initialize the BMP180 (it is important to get calibration values stored on the device).
   if (pressure.begin()) {
     #ifdef DEBUG
