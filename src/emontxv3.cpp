@@ -14,71 +14,42 @@
 const char* ssid = "BrandstorpWifi";
 const char* password = "Brandstorp";
 
-//#define MQTT_USERNAME "emonpi"     
-//#define MQTT_PASSWORD "emonpimqtt2016"  
-const char* mqtt_server = "192.168.1.190";
-char* mqtt_status_topic = "emontxv3/values";
-char* mqtt_debug_topic = "emontxv3/debug";
-char* mqtt_error_topic = "emontxv3/error";
 
-#include <ESP8266WiFi.h>
-#include <Wire.h>
-// OTA
+// External libs
 #include <ArduinoOTA.h>
-// Json
 #include <ArduinoJson.h>
-// Mqtt
-#include <PubSubClient.h>
+// Internal functions
+#include <i2cscan.h>
+#include <htu21d.h>
+#include <bmp180.h>
+#include <BH1750_read.h>
+#include <mqtt_reconnect.h>
+
+// Settings
+#include <settings.h>
+
 WiFiClient espClient;
-PubSubClient client(espClient);
-
-// Light sensor
-#include <BH1750FVI.h>
-
-#include "SparkFunHTU21D.h"
-
-// Pressure & temp
-#include <SFE_BMP180.h>
-SFE_BMP180 pressure;
-
-#define ALTITUDE 54.0 // Altitude of Såtenäs (my location) in meters
-char status;
-double T,P,p0,a;
-int iBMPtemp, iBMPpres;
-
-// Light 
-uint16_t lux;
-
-// Humidity/temperature
-HTU21D htu21d;
-float humd, humt;
-int ihumd, ihumt;
 
 // ADC
 #include <Adafruit_ADS1X15.h>
 Adafruit_ADS1115 ads;
 
 // I2C comms
-const int sclPin = D5;
-const int sdaPin = D4;
-uint8_t ADDRESSPIN = 0;
+const int sdaPin = 12;
+const int sclPin = 13;
+//uint8_t ADDRESSPIN = 0;
 
 const char compile_date[] = __DATE__ " " __TIME__;
 
-
-// See https://github.com/PeterEmbedded/BH1750FVI/blob/master/src/BH1750FVI.h
-BH1750FVI::eDeviceAddress_t DEVICEADDRESS = BH1750FVI::k_DevAddress_L;
-BH1750FVI::eDeviceMode_t DEVICEMODE = BH1750FVI::k_DevModeOneTimeLowRes;
-BH1750FVI LightSensor(ADDRESSPIN, DEVICEADDRESS, DEVICEMODE);
-
-#define appname "emontxv3"
+// Use this to store sensor values
+uint8_t *measured_values_array;
+//measured_values_array = NULL;
+int length = 10;
+//measured_values_array = malloc(length * sizeof(int));
 
 void setup() {
-  if (!ads.begin()) {
-    Serial.println("Failed to initialize ADS.");
-    while (1);
-  }
 
+int debugflag = DEBUG;
 // ArduinoJson5 code, replace if needed
   //StaticJsonBuffer<150> jsonBuffer;
   //JsonObject& root = jsonBuffer.createObject();
@@ -87,21 +58,33 @@ void setup() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   while (WiFi.waitForConnectResult() != WL_CONNECTED) {
+    Serial.begin(115200);
     Serial.println(F("Connection Failed! Rebooting..."));
     delay(5000);
     ESP.restart();
   }
-  WiFi.hostname(appname);
+  WiFi.hostname(APPNAME);
   #ifdef DEBUG
     Serial.begin(115200);
     Serial.println("emontxv3");
 
-    i2cscan();
+    i2cscan(sdaPin, sclPin);
 
-    Serial.print(F("IP address: "));
+    Serial.print(F("Wifi connected, IP address: "));
     Serial.println(WiFi.localIP());
 
   #endif
+
+  if (!ads.begin()) {
+      Serial.println("Failed to initialize ADS.");
+    while (1);
+  }
+  else
+  {
+    #ifdef DEBUG
+      Serial.println("Initialized ADS.");
+    #endif
+  }
 
 // Enable OTA 
   // Hostname 
@@ -131,18 +114,19 @@ void setup() {
   #endif
 
   // Setup Mqtt connection
-  client.setServer(mqtt_server, 1883);
+  PubSubClient client(espClient);
+  client.setServer(MQTT_SERVER, MQTT_PORT);
   if (!client.connected()) {
-      reconnect();
+      mqtt_reconnect(client, debugflag);
   }
 
-  IPAddress ip = WiFi.localIP();
+  //IPAddress ip = WiFi.localIP();
   char buf[60];
   sprintf(buf, "%s @ IP:%d.%d.%d.%d SSID: %s", appname, WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3], ssid );
-  Serial.println(buf);
-  root["status"] = buf;
-  root.printTo((char*)msg, root.measureLength() + 1);
-  client.publish(mqtt_debug_topic, msg);
+  //Serial.println(buf);
+  //root["status"] = buf;
+  //root.printTo((char*)msg, root.measureLength() + 1);
+  //client.publish(mqtt_debug_topic, msg);
   
   bmp180();
   bh1750fvi();
@@ -154,14 +138,14 @@ void setup() {
   //Voltage = (adc0 * 0.1875)/1000;
 
   // Send values
-  root["airPressure"] = iBMPpres;
-  root["Light"] = lux;
-  root["Humidity"] = ihumd;
-  root["Temperature"] = ihumt;
+  //root["airPressure"] = iBMPpres;
+  //root["Light"] = lux;
+  //root["Humidity"] = ihumd;
+  //root["Temperature"] = ihumt;
 
   
-  root.printTo((char*)msg, root.measureLength() + 1);
-  client.publish(mqtt_debug_topic, msg);
+  //root.printTo((char*)msg, root.measureLength() + 1);
+//  client.publish(mqtt_debug_topic, msg);
 
   
 }
