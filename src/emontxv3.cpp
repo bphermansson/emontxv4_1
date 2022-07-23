@@ -16,19 +16,18 @@ const char* password = "Brandstorp";
 
 
 // External libs
-#include <ArduinoOTA.h>
 #include <ArduinoJson.h>
+
 // Internal functions
 #include <i2cscan.h>
 #include <htu21d.h>
 #include <bmp180.h>
 #include <BH1750_read.h>
 #include <mqtt_reconnect.h>
+#include <wifi_connect.h>
 
 // Settings
 #include <settings.h>
-
-WiFiClient espClient;
 
 // ADC
 #include <Adafruit_ADS1X15.h>
@@ -49,11 +48,27 @@ int length = 10;
 
 void setup() {
 
-int debugflag = DEBUG;
+//int debugflag = DEBUG;
 // ArduinoJson5 code, replace if needed
   //StaticJsonBuffer<150> jsonBuffer;
   //JsonObject& root = jsonBuffer.createObject();
   //char msg[150];
+  
+
+
+
+  //wifidata.ipaddress
+  //int a = 5;
+  //int *pa = &a;
+
+  wifidataarray wifidata;
+  wifidataarray *ptrwifidata = &wifidata;
+
+  connectWifi(ptrwifidata);
+    Serial.print("Ip in main: ");
+    Serial.println(ip);
+
+  /*
   
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -64,6 +79,18 @@ int debugflag = DEBUG;
     ESP.restart();
   }
   WiFi.hostname(APPNAME);
+  */
+  // From EspOledTemp:
+  // Connect to WiFi
+  /*
+  myip = connectWifi();
+
+  // Print IP address to Oled & Serial
+  char __myip[sizeof(myip)];
+  myip.toCharArray(__myip, 20);
+  Serial.printf("Connected to Wifi with IP %s\n", __myip);
+  */
+  
   #ifdef DEBUG
     Serial.begin(115200);
     Serial.println("emontxv3");
@@ -86,43 +113,16 @@ int debugflag = DEBUG;
     #endif
   }
 
-// Enable OTA 
-  // Hostname 
-  ArduinoOTA.setHostname(appname);
-    
-  ArduinoOTA.onStart([]() {
-    Serial.println("Start");
-  });
-  ArduinoOTA.onEnd([]() {
-    Serial.println("\nEnd");
-  });
-  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-  });
-  ArduinoOTA.onError([](ota_error_t error) {
-    Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-    else if (error == OTA_END_ERROR) Serial.println("End Failed");
-  });
-  ArduinoOTA.begin();
-  #ifdef DEBUG
-    Serial.print("Over The Air programming enabled, port: ");
-    Serial.println(appname);
-  #endif
-
   // Setup Mqtt connection
-  PubSubClient client(espClient);
+  /*PubSubClient client(espClient);
   client.setServer(MQTT_SERVER, MQTT_PORT);
   if (!client.connected()) {
-      mqtt_reconnect(client, debugflag);
+      mqtt_reconnect(client, DEBUG);
   }
-
+*/
   //IPAddress ip = WiFi.localIP();
-  char buf[60];
-  sprintf(buf, "%s @ IP:%d.%d.%d.%d SSID: %s", appname, WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3], ssid );
+  //char buf[60];
+  //sprintf(buf, "%s @ IP:%d.%d.%d.%d SSID: %s", APPNAME, WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3], ssid );
   //Serial.println(buf);
   //root["status"] = buf;
   //root.printTo((char*)msg, root.measureLength() + 1);
@@ -151,5 +151,5 @@ int debugflag = DEBUG;
 }
 
 void loop() {
-  ArduinoOTA.handle();
+  //ArduinoOTA.handle();
 }
