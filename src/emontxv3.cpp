@@ -34,8 +34,8 @@ const char* password = "Brandstorp";
 Adafruit_ADS1115 ads;
 
 // I2C comms
-const int sdaPin = 12;
-const int sclPin = 13;
+//const int sdaPin = 12;
+//const int sclPin = 13;
 //uint8_t ADDRESSPIN = 0;
 
 const char compile_date[] = __DATE__ " " __TIME__;
@@ -95,7 +95,7 @@ void setup() {
     Serial.begin(115200);
     Serial.println("emontxv3");
 
-    i2cscan(sdaPin, sclPin);
+    i2cscan(SDAPIN, SCLPIN);
 
     Serial.print(F("Wifi connected, IP address: "));
     Serial.println(WiFi.localIP());
