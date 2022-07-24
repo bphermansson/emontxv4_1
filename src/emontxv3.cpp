@@ -9,11 +9,6 @@
   -ADS1115, ADC, I2C.  
 */  
 
-#define DEBUG 1
-
-const char* ssid = "BrandstorpWifi";
-const char* password = "Brandstorp";
-
 
 // External libs
 #include <ArduinoJson.h>
@@ -33,11 +28,6 @@ const char* password = "Brandstorp";
 #include <Adafruit_ADS1X15.h>
 Adafruit_ADS1115 ads;
 
-// I2C comms
-//const int sdaPin = 12;
-//const int sclPin = 13;
-//uint8_t ADDRESSPIN = 0;
-
 const char compile_date[] = __DATE__ " " __TIME__;
 
 // Use this to store sensor values
@@ -48,57 +38,25 @@ int length = 10;
 
 void setup() {
 
-//int debugflag = DEBUG;
 // ArduinoJson5 code, replace if needed
   //StaticJsonBuffer<150> jsonBuffer;
   //JsonObject& root = jsonBuffer.createObject();
   //char msg[150];
-  
 
-
-
-  //wifidata.ipaddress
-  //int a = 5;
-  //int *pa = &a;
-
-  wifidataarray wifidata;
-  wifidataarray *ptrwifidata = &wifidata;
-
-  connectWifi(ptrwifidata);
-    Serial.print("Ip in main: ");
-    Serial.println(ip);
-
-  /*
-  
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.begin(115200);
-    Serial.println(F("Connection Failed! Rebooting..."));
-    delay(5000);
-    ESP.restart();
-  }
-  WiFi.hostname(APPNAME);
-  */
-  // From EspOledTemp:
-  // Connect to WiFi
-  /*
-  myip = connectWifi();
-
-  // Print IP address to Oled & Serial
-  char __myip[sizeof(myip)];
-  myip.toCharArray(__myip, 20);
-  Serial.printf("Connected to Wifi with IP %s\n", __myip);
-  */
-  
   #ifdef DEBUG
     Serial.begin(115200);
-    Serial.println("emontxv3");
+  #endif
+
+  char wd[100];
+  connectWifi(wd);
+
+  #ifdef DEBUG
+    Serial.printf("\n---emontxv3---\n\n");
 
     i2cscan(SDAPIN, SCLPIN);
 
     Serial.print(F("Wifi connected, IP address: "));
-    Serial.println(WiFi.localIP());
+    Serial.println(wd);
 
   #endif
 

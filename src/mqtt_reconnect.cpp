@@ -1,6 +1,4 @@
 #include <mqtt_reconnect.h>
-#define MQTT_USERNAME ""     
-#define MQTT_PASSWORD "" 
 
 void mqtt_reconnect(PubSubClient client, uint8_t debugflag) {
   // Loop until we're reconnected
@@ -8,8 +6,8 @@ void mqtt_reconnect(PubSubClient client, uint8_t debugflag) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
     if (client.connect("appname", MQTT_USERNAME, MQTT_PASSWORD)) {
-      if(debugflag)
-      {
+    #ifdef DEBUG
+      
         String temp = "Connected to Mqtt broker as " + String(APPNAME);
         Serial.println(temp);
         //StaticJsonBuffer<150> jsonBuffer;
@@ -18,7 +16,7 @@ void mqtt_reconnect(PubSubClient client, uint8_t debugflag) {
         //root["status"] = temp;
         //root.printTo((char*)msg, root.measureLength() + 1);
         client.publish(MQTT_DEBUG_TOPIC, msg);
-      }
+    #endif  
       
     } else {
       Serial.print("Mqtt connection failed, rc=");

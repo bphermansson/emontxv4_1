@@ -6,7 +6,9 @@
 
     typedef struct
     {
-        char *ipaddress;
+        char ipaddress;
     } wifidataarray;   
-    void connectWifi(wifidataarray *pwaddr);
+
+    //void connectWifi(wifidataarray *pwaddr);
+    void connectWifi(char *pwaddr);
 #endif

@@ -11,12 +11,9 @@ void bh1750fvi() {
     delay(5000);
   }
 
-  delay(100);
-  //lux = LightSensor.GetLightIntensity();
-  Serial.print(myBH1750.readLightLevel());  
+  uint16_t lux = myBH1750.readLightLevel();
   #ifdef DEBUG
-    Serial.printf("Light: %d lux", lux);
+    Serial.printf("Lightlevel: %d lux\n", lux);  
     Serial.println();
   #endif  
-  delay(250);
 }

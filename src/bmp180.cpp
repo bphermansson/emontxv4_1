@@ -12,7 +12,7 @@ void bmp180() {
   // Initialize the BMP180 (it is important to get calibration values stored on the device).
   if (pressure.begin()) {
     #ifdef DEBUG
-      //Serial.println("BMP180 init success");
+      Serial.println("BMP180 init success");
     #endif 
     __asm__("nop\n\t");    
   }
@@ -26,7 +26,7 @@ void bmp180() {
   // Air pressure, you must read the BMP180:s temp too.
  
   #ifdef DEBUG
-    //Serial.println("Measure BMP180 temp and air pressure");
+    Serial.println("Measure BMP180 temp and air pressure");
   #endif  
   
   status = pressure.startTemperature();
@@ -51,10 +51,10 @@ void bmp180() {
       #endif
       // Convert to int
       //double T2=T*100; // Preserve decimals
-      
-      //Serial.print("BMP180 temp as int:");
-      //Serial.println(iBMPtemp);
-      
+      #ifdef DEBUG
+        Serial.print("BMP180 temp as int:");
+        Serial.println(iBMPtemp);
+      #endif
       // Start a pressure measurement:
       // The parameter is the oversampling setting, from 0 to 3 (highest res, longest wait).
       // If request is successful, the number of ms to wait is returned.
@@ -73,13 +73,13 @@ void bmp180() {
         // Function returns 1 if successful, 0 if failure.
         delay(1000);
         #ifdef DEBUG
-           //Serial.println("Get pressure value");
+           Serial.println("Get pressure value");
         #endif
         status = pressure.getPressure(P,T);
         if (status != 0)
         {
           #ifdef DEBUG
-            //Serial.println("Got p value");
+            Serial.println("Got p value");
           #endif
 
           // The pressure sensor returns abolute pressure, which varies with altitude.
@@ -89,13 +89,11 @@ void bmp180() {
           // Result: p0 = sea-level compensated pressure in mb
 
           p0 = pressure.sealevel(P,ALTITUDE); 
-          /*
           #ifdef DEBUG
             Serial.print("relative (sea-level) pressure: ");
             Serial.print(p0);
             Serial.println(" mb/hPa");
           #endif
-          */
           // Convert to int
           iBMPpres = (int) p0;
           #ifdef DEBUG

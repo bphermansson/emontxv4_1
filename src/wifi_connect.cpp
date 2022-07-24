@@ -1,7 +1,6 @@
 #include "wifi_connect.h"
 
-void connectWifi(wifidataarray *wifidata) {
-//void connectWifi(wifidataarray *pa) {
+void connectWifi(char *wifidata) {
   WiFiClient espClient;
   delay(2000);
   Serial.println("Connect to Wifi...");
@@ -24,9 +23,8 @@ void connectWifi(wifidataarray *wifidata) {
   }
   delay(3000);
     
-    IPAddress ip;
-    ip = WiFi.localIP();
+    IPAddress ip = WiFi.localIP();
     Serial.print("Ip in con: ");
     Serial.println(ip);
-    sprintf(wifidata->ipaddress, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+    sprintf(wifidata, "%u.%u.%u.%u", ip[0], ip[1], ip[2], ip[3]);
 }
