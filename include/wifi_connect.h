@@ -9,6 +9,5 @@
         char ipaddress;
     } wifidataarray;   
 
-    //void connectWifi(wifidataarray *pwaddr);
     void connectWifi(char *pwaddr);
 #endif

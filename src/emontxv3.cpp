@@ -37,12 +37,6 @@ int length = 10;
 //measured_values_array = malloc(length * sizeof(int));
 
 void setup() {
-
-// ArduinoJson5 code, replace if needed
-  //StaticJsonBuffer<150> jsonBuffer;
-  //JsonObject& root = jsonBuffer.createObject();
-  //char msg[150];
-
   #ifdef DEBUG
     Serial.begin(115200);
   #endif
@@ -70,24 +64,31 @@ void setup() {
       Serial.println("Initialized ADS.");
     #endif
   }
-
-  // Setup Mqtt connection
-  /*PubSubClient client(espClient);
-  client.setServer(MQTT_SERVER, MQTT_PORT);
-  if (!client.connected()) {
-      mqtt_reconnect(client, DEBUG);
-  }
-*/
-  //IPAddress ip = WiFi.localIP();
-  //char buf[60];
-  //sprintf(buf, "%s @ IP:%d.%d.%d.%d SSID: %s", APPNAME, WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3], ssid );
-  //Serial.println(buf);
-  //root["status"] = buf;
-  //root.printTo((char*)msg, root.measureLength() + 1);
-  //client.publish(mqtt_debug_topic, msg);
   
-  bmp180();
+  #ifdef DEBUG
+      Serial.println("Read BMP180");
+  #endif
+  
+  bmpvalues *temppresPtr = (bmpvalues*)malloc(sizeof(bmpvalues));
+  
+  bmp180(temppresPtr);  
+  #ifdef DEBUG
+    Serial.println("Result from BMP180");
+    Serial.print("BMP180 temp: ");
+    Serial.println(temppresPtr->temp);
+    Serial.print("BMP180 absolute pressure: ");
+    Serial.println(temppresPtr->abspressure);
+    Serial.print("BMP180 pressure: ");
+    Serial.println(temppresPtr->pressure);
+  #endif  
+
+  #ifdef DEBUG
+    Serial.println("Init bh1750");
+  #endif
   bh1750fvi();
+  #ifdef DEBUG
+    Serial.println("Init htu21d");
+  #endif
   read_htu21d(); 
 
   ads.begin();
