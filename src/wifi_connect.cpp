@@ -24,7 +24,10 @@ void connectWifi(char *wifidata) {
   delay(3000);
     
     IPAddress ip = WiFi.localIP();
-    Serial.print("Ip in con: ");
-    Serial.println(ip);
     sprintf(wifidata, "%u.%u.%u.%u", ip[0], ip[1], ip[2], ip[3]);
+    #ifdef DEBUG
+      Serial.print("Ip in con: ");
+      Serial.println(ip);
+    #endif
+    
 }

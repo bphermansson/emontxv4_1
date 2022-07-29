@@ -1,6 +1,5 @@
 #ifndef BMP180_H_INCLUDED
 #define BMP180_H_INCLUDED
-    #define NAMELEN 100
     typedef struct
     {
         double temp;
