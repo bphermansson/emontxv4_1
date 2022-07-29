@@ -69,20 +69,17 @@ void setup() {
   }
 
 // Now is the time to do stuff like reading sensors while the radio is still off
-
-
-
 /* -------- End borrowed code -------- */
 
   #ifdef DEBUG
     Serial.begin(115200);
   #endif
 
-  char wd[100];
+  //char wd[100];
   //connectWifi(wd);
 
   #ifdef DEBUG
-    Serial.printf("\n---emontxv3---\n\n");
+    Serial.printf("\n---emontxv4_1---\n\n");
 
     i2cscan(SDAPIN, SCLPIN);
 
@@ -193,12 +190,12 @@ else {
     wifiStatus = WiFi.status();
   }
   //---------
-  /*
+  #ifdef DEBUG
 
-  Serial.println(" WiFi connected");
+    Serial.println(" WiFi connected");
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
-  */
+  #endif  
 
   //-----
   // Write current connection info back to RTC
