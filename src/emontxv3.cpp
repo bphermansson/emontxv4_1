@@ -118,9 +118,17 @@ void setup() {
   #endif  
 
   #ifdef DEBUG
-    Serial.println("Init bh1750");
+    Serial.println("Read lux from BH1750");
   #endif
-  bh1750fvi();
+  
+  uint8_t lux=0;
+  uint8_t *luxPtr = &lux;
+  bh1750fvi(luxPtr);
+
+  #ifdef DEBUG
+    Serial.printf("Got %d lux from reading BH1750.\n", *luxPtr);  
+  #endif
+
   #ifdef DEBUG
     Serial.println("Init htu21d");
   #endif

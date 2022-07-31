@@ -5,5 +5,6 @@
     #include <BH1750FVI.h>
     #include <settings.h>
     // See https://github.com/enjoyneering/BH1750FVI
-    void bh1750fvi();
+
+    void bh1750fvi(uint8_t *luxPtr);
 #endif
