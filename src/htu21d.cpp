@@ -1,14 +1,12 @@
-#ifndef HTU21_H_INCLUDED
-#define HTU21_H_INCLUDED
-
 #include "SparkFunHTU21D.h"
+#include <htu21d.h>
 
 // Humidity/temperature
 HTU21D htu21d;
 float humd, humt;
 int ihumd, ihumt;
 
-void read_htu21d() {
+void read_htu21d(htuvalues *htuvalues) {
     // Init humidity sensor
     #ifdef DEBUG
       //Serial.println("HTU21 init");
@@ -16,20 +14,26 @@ void read_htu21d() {
     htu21d.begin();
     // Read humidity sensor
     humd = htu21d.readHumidity();
-    ihumd = (int) humd;
+    ihumd = (int) humd*10;  
 
     // Read temp sensor
     humt = htu21d.readTemperature();
-    ihumt = (int) humt;
+    ihumt = (int) humt*10;
     
+    htuvalues->temp = humt;
+    htuvalues->humidity = humd;
+
     #ifdef DEBUG
-      Serial.print("Humidity = ");
+      Serial.print("HTU21D humidity = ");
+      Serial.print(humd);
+      Serial.print(" - ");
       Serial.print(ihumd);
       Serial.println("%");
       Serial.print("HTU21D temp = ");
+      Serial.print(humt);
+      Serial.print(" - ");
       Serial.print(ihumt);
       Serial.println("C");
     #endif
 
 }
-#endif

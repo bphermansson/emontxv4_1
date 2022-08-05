@@ -11,7 +11,6 @@ char status;
 double T,P,p0,a;
 
 void bmp180(bmpvalues *temppresPtr) {
-  //temppresPtr->temp = 1;  
   
   // Initialize the BMP180 (it is important to get calibration values stored on the device).
   if (pressure.begin()) {

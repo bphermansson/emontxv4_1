@@ -130,14 +130,38 @@ void setup() {
   #endif
 
   #ifdef DEBUG
-    Serial.println("Init htu21d");
+    Serial.println("Read Humidity/temperature from HTU21D");
   #endif
-  read_htu21d(); 
 
-  ads.begin();
-  int16_t adc0;  // we read from the ADC, we have a sixteen bit integer as a result
-  adc0 = ads.readADC_SingleEnded(0);
-  //Voltage = (adc0 * 0.1875)/1000;
+  htuvalues *temphumPtr = (htuvalues*)malloc(sizeof(htuvalues));
+
+  read_htu21d(temphumPtr); 
+
+  #ifdef DEBUG
+    Serial.printf("Got humidity %f from reading HTU21D.\n", temphumPtr->humidity);  
+    Serial.printf("Got temp %f from reading HTU21D.\n", temphumPtr->temp);  
+  #endif
+
+
+  ads.begin();  // Start the I2C connected ADC (ADS1115, four channels, 16 bits)  
+  // Here a voltage divider is used. 47k from battery to ADC in, 100k to ground.
+  // 3.9V from battery, 2.64 to ADC. 3.9/2.64 = 1.4773. ADC value = 14050.
+  uint16_t battery = ads.readADC_SingleEnded(0);
+  float volts0 = ads.computeVolts(battery);
+  float adjVolt = volts0*1.4773;
+  
+  #ifdef DEBUG
+    Serial.printf("ADC reading: %d. Converted voltage: %f. Real voltage: %f\n", battery, volts0, adjVolt);  
+  #endif
+
+  uint16 solar;
+  solar = ads.readADC_SingleEnded(1);
+  uint16_t uvlight;
+  uvlight = ads.readADC_SingleEnded(2);
+  uint16_t solarcurrent;
+  solarcurrent = ads.readADC_SingleEnded(3);
+
+    Serial.printf("AD: %d %d %d\n", solar, uvlight, solarcurrent);  
 
   // Send values
   //root["airPressure"] = iBMPpres;
