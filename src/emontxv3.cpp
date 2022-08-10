@@ -30,6 +30,9 @@
 #include <Adafruit_ADS1X15.h>
 Adafruit_ADS1115 ads;
 
+WiFiClient esp_client;
+PubSubClient mqtt_client(esp_client);
+
 const char compile_date[] = __DATE__ " " __TIME__;
 
 // Use this to store sensor values
@@ -181,6 +184,7 @@ void setup() {
   #endif
 
 
+  StaticJsonDocument<96> doc;
 
   // Send values
 
@@ -255,6 +259,9 @@ else {
     Serial.println(WiFi.localIP());
   #endif  
 
+  uint8_t t;
+  mqtt_reconnect(mqtt_client, esp_client, t);
+
   //-----
   // Write current connection info back to RTC
   rtcData.channel = WiFi.channel();
@@ -275,4 +282,5 @@ else {
 
 void loop() {
   //ArduinoOTA.handle();
+  mqtt_client.loop();
 }

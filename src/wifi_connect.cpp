@@ -1,5 +1,7 @@
 #include "wifi_connect.h"
 
+// NOT USED?
+
 void connectWifi(char *wifidata) {
   WiFiClient espClient;
   delay(2000);

@@ -1,8 +1,11 @@
 #ifndef EMONTXV3_H_INCLUDED
 #define EMONTXV3_H_INCLUDED
     #include <ArduinoJson.h>
-    StaticJsonDocument<96> doc;
     #define MY_JSON_OBJECT_SIZE 100
+    
+    #include <ESP8266WiFi.h>
+    #include <PubSubClient.h>
+
     typedef struct
     {
         float battery_voltage;
