@@ -143,7 +143,9 @@ void setup() {
     Serial.printf("Got temp %f from reading HTU21D.\n", temphumPtr->temp);  
   #endif
 
-
+  #ifdef DEBUG
+    Serial.printf("Read inputs on ADS1115 A/D converter\n");  
+  #endif
   ads.begin();  
   /* Start the I2C connected ADC (ADS1115, four channels, 16 bits)  
    Here a voltage divider is used. 47k from battery to ADC in, 100k to ground.
@@ -157,13 +159,13 @@ void setup() {
   adPtr->battery_voltage = adc_volt*1.4773;
 
   #ifdef DEBUG
-    Serial.printf("ADC reading: %d. Converted voltage: %f. Real voltage: %f\n", adcval, adc_volt, adPtr->battery_voltage);  
+    Serial.printf("ADC reading: %d. Converted voltage: %f. Real battery voltage: %f\n", adcval, adc_volt, adPtr->battery_voltage);  
   #endif
 
   adcval = ads.readADC_SingleEnded(1);
   adPtr->solar_cell_voltage = ads.computeVolts(adcval);
   #ifdef DEBUG
-    Serial.printf("Solar: %d %f\n", adcval, adPtr->solar_cell_voltage);    
+    Serial.printf("Solar voltage: %d %f\n", adcval, adPtr->solar_cell_voltage);    
   #endif
 
   adcval = ads.readADC_SingleEnded(2);
@@ -182,7 +184,7 @@ void setup() {
 
   // Send values
 
-  //doc["airPressure"] = temppresPtr->pressure;
+  doc["airPressure"] = temppresPtr->pressure;
   //root["Light"] = lux;
   //root["Humidity"] = ihumd;
   //root["Temperature"] = ihumt;
@@ -191,7 +193,13 @@ void setup() {
   //root.printTo((char*)msg, root.measureLength() + 1);
 //  client.publish(mqtt_debug_topic, msg);
 
-  
+
+  //JsonArray data = doc.createNestedArray("data");
+  char output[MY_JSON_OBJECT_SIZE];
+  serializeJson(doc, output);
+
+  Serial.printf("Data: %s", output);
+
 /* -------- Borrowed code -------- */
  //Switch Radio back On
 

@@ -2,6 +2,7 @@
 #define EMONTXV3_H_INCLUDED
     #include <ArduinoJson.h>
     StaticJsonDocument<96> doc;
+    #define MY_JSON_OBJECT_SIZE 100
     typedef struct
     {
         float battery_voltage;
