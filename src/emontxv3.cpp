@@ -14,6 +14,7 @@
 #include <ArduinoJson.h>
 
 // Internal functions
+#include <emontxv3.h>
 #include <i2cscan.h>
 #include <htu21d.h>
 #include <bmp180.h>
@@ -106,7 +107,7 @@ void setup() {
   bmpvalues *temppresPtr = (bmpvalues*)malloc(sizeof(bmpvalues));
   
   bmp180(temppresPtr);  
-  
+
   #ifdef DEBUG
     Serial.println("Result from BMP180");
     Serial.print("BMP180 temp: ");
@@ -143,28 +144,45 @@ void setup() {
   #endif
 
 
-  ads.begin();  // Start the I2C connected ADC (ADS1115, four channels, 16 bits)  
-  // Here a voltage divider is used. 47k from battery to ADC in, 100k to ground.
-  // 3.9V from battery, 2.64 to ADC. 3.9/2.64 = 1.4773. ADC value = 14050.
-  uint16_t battery = ads.readADC_SingleEnded(0);
-  float volts0 = ads.computeVolts(battery);
-  float adjVolt = volts0*1.4773;
-  
+  ads.begin();  
+  /* Start the I2C connected ADC (ADS1115, four channels, 16 bits)  
+   Here a voltage divider is used. 47k from battery to ADC in, 100k to ground.
+   3.9V from battery, 2.64 to ADC. 3.9/2.64 = 1.4773. ADC value = 14050.
+   But we use the lib's built in function for conversion to volts. 
+  */
+  advalues *adPtr = (advalues*)malloc(sizeof(advalues));
+
+  uint16_t adcval = ads.readADC_SingleEnded(0);
+  float adc_volt = ads.computeVolts(adcval);
+  adPtr->battery_voltage = adc_volt*1.4773;
+
   #ifdef DEBUG
-    Serial.printf("ADC reading: %d. Converted voltage: %f. Real voltage: %f\n", battery, volts0, adjVolt);  
+    Serial.printf("ADC reading: %d. Converted voltage: %f. Real voltage: %f\n", adcval, adc_volt, adPtr->battery_voltage);  
   #endif
 
-  uint16 solar;
-  solar = ads.readADC_SingleEnded(1);
-  uint16_t uvlight;
-  uvlight = ads.readADC_SingleEnded(2);
-  uint16_t solarcurrent;
-  solarcurrent = ads.readADC_SingleEnded(3);
+  adcval = ads.readADC_SingleEnded(1);
+  adPtr->solar_cell_voltage = ads.computeVolts(adcval);
+  #ifdef DEBUG
+    Serial.printf("Solar: %d %f\n", adcval, adPtr->solar_cell_voltage);    
+  #endif
 
-    Serial.printf("AD: %d %d %d\n", solar, uvlight, solarcurrent);  
+  adcval = ads.readADC_SingleEnded(2);
+  adPtr->uvlight_sensor_voltage = ads.computeVolts(adcval);
+  #ifdef DEBUG
+    Serial.printf("Uvlight: %d %f\n", adcval, adPtr->uvlight_sensor_voltage);    
+  #endif
+  
+  adcval = ads.readADC_SingleEnded(3);
+  adPtr->battery_current = ads.computeVolts(adcval);
+  #ifdef DEBUG
+    Serial.printf("Solar/battery current: %d %f\n", adcval, adPtr->battery_current);    
+  #endif
+
+
 
   // Send values
-  //root["airPressure"] = iBMPpres;
+
+  //doc["airPressure"] = temppresPtr->pressure;
   //root["Light"] = lux;
   //root["Humidity"] = ihumd;
   //root["Temperature"] = ihumt;

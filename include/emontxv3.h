@@ -1,0 +1,12 @@
+#ifndef EMONTXV3_H_INCLUDED
+#define EMONTXV3_H_INCLUDED
+    #include <ArduinoJson.h>
+    StaticJsonDocument<96> doc;
+    typedef struct
+    {
+        float battery_voltage;
+        float solar_cell_voltage;
+        float uvlight_sensor_voltage;
+        float battery_current;           // Charge or disharge
+    } advalues;
+#endif
