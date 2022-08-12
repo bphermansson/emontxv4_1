@@ -19,7 +19,7 @@
 #include <htu21d.h>
 #include <bmp180.h>
 #include <BH1750_read.h>
-#include <mqtt_reconnect.h>
+#include <mqtt_functions.h>
 #include <wifi_connect.h>
 #include <calculateCRC32.h>
 
@@ -31,7 +31,7 @@
 Adafruit_ADS1115 ads;
 
 WiFiClient esp_client;
-PubSubClient mqtt_client(esp_client);
+//PubSubClient mqtt_client(esp_client); // Old Mqtt lib
 
 const char compile_date[] = __DATE__ " " __TIME__;
 
@@ -259,8 +259,11 @@ else {
     Serial.println(WiFi.localIP());
   #endif  
 
-  uint8_t t;
-  mqtt_reconnect(mqtt_client, esp_client, t);
+  uint8_t t=0;
+  //mqtt_reconnect(mqtt_client, esp_client, t);
+  mqtt_setup();
+  connectToMqtt();
+mqtt_publish();
 
   //-----
   // Write current connection info back to RTC
@@ -282,5 +285,5 @@ else {
 
 void loop() {
   //ArduinoOTA.handle();
-  mqtt_client.loop();
+  //mqtt_client.loop();
 }
