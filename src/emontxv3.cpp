@@ -259,11 +259,10 @@ else {
     Serial.println(WiFi.localIP());
   #endif  
 
-  uint8_t t=0;
-  //mqtt_reconnect(mqtt_client, esp_client, t);
-  mqtt_setup();
-  connectToMqtt();
-mqtt_publish();
+  mqtt_init();
+  delay(100);
+  char data[] = "Hello World!";
+  publishMqtt(data);
 
   //-----
   // Write current connection info back to RTC
