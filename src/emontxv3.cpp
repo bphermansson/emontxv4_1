@@ -31,7 +31,7 @@
 Adafruit_ADS1115 ads;
 
 WiFiClient esp_client;
-//PubSubClient mqtt_client(esp_client); // Old Mqtt lib
+//PubSubClient mqtt_client(esp_client); 
 
 const char compile_date[] = __DATE__ " " __TIME__;
 
@@ -260,9 +260,8 @@ else {
   #endif  
 
   mqtt_init();
-  delay(100);
-  char data[] = "Hello World!";
-  publishMqtt(data);
+  mqtt_test();
+
 
   //-----
   // Write current connection info back to RTC
