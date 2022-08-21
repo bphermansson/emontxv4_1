@@ -128,11 +128,11 @@ void setup() {
   #endif
   
   uint8_t lux=0;
-  uint8_t *luxPtr = &lux;
-  bh1750fvi(luxPtr);
+  uint8_t *ptr_lux = &lux;
+  bh1750fvi(ptr_lux);
 
   #ifdef DEBUG
-    Serial.printf("Got %d lux from reading BH1750.\n", *luxPtr);  
+    Serial.printf("Got %d lux from reading BH1750.\n", *ptr_lux);  
   #endif
 
   #ifdef DEBUG
@@ -144,8 +144,8 @@ void setup() {
   read_htu21d(temphumPtr); 
 
   #ifdef DEBUG
-    Serial.printf("Got humidity %f from reading HTU21D.\n", temphumPtr->humidity);  
     Serial.printf("Got temp %f from reading HTU21D.\n", temphumPtr->temp);  
+    Serial.printf("Got humidity %f from reading HTU21D.\n", temphumPtr->humidity);  
   #endif
 
   #ifdef DEBUG
@@ -187,24 +187,20 @@ void setup() {
 
 
   StaticJsonDocument<96> doc;
+  doc["bmp_temp"] = temppresPtr->temp;
+  doc["bmp_air_pressure"] = temppresPtr->pressure;
+  doc["Light"] = ptr_lux;
+  doc["htu_temp"] = temphumPtr->temp;
+  doc["htu_hum"] = temphumPtr->humidity;
+  doc["battery_voltage"] = adPtr->battery_voltage;
+  doc["solar_cell_voltage"] = adPtr->solar_cell_voltage;
+  doc["uvlight_sensor_voltage"] = adPtr->uvlight_sensor_voltage;
+  doc["battery_current"] = adPtr->battery_current;
 
-  // Send values
+  char arr_all_data[MY_JSON_OBJECT_SIZE];
+  serializeJson(doc, arr_all_data);
 
-  doc["airPressure"] = temppresPtr->pressure;
-  //root["Light"] = lux;
-  //root["Humidity"] = ihumd;
-  //root["Temperature"] = ihumt;
-
-  
-  //root.printTo((char*)msg, root.measureLength() + 1);
-//  client.publish(mqtt_debug_topic, msg);
-
-
-  //JsonArray data = doc.createNestedArray("data");
-  char output[MY_JSON_OBJECT_SIZE];
-  serializeJson(doc, output);
-
-  Serial.printf("Data: %s", output);
+  Serial.printf("Data: %s\n", arr_all_data);
   
 
 /* -------- Borrowed code -------- */
@@ -264,12 +260,14 @@ else {
 
   mqtt_init();
   mqtt_test();
-  mqtt_send(output);
+  mqtt_send(arr_all_data);
 
        
+/*       
   strcpy(ptr_arr_mqtt_text, "123");
   const char *const_ptr_arr_mqtt_text = ptr_arr_mqtt_text; 
   mqtt_send(const_ptr_arr_mqtt_text);
+*/
 
   //-----
   // Write current connection info back to RTC
