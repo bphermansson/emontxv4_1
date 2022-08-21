@@ -37,6 +37,8 @@ const char compile_date[] = __DATE__ " " __TIME__;
 
 // Use this to store sensor values
 uint8_t *measured_values_array;
+char arr_mqtt_text[100];
+char *ptr_arr_mqtt_text = arr_mqtt_text; 
 
 int length = 10;
 
@@ -203,6 +205,7 @@ void setup() {
   serializeJson(doc, output);
 
   Serial.printf("Data: %s", output);
+  
 
 /* -------- Borrowed code -------- */
  //Switch Radio back On
@@ -261,7 +264,12 @@ else {
 
   mqtt_init();
   mqtt_test();
+  mqtt_send(output);
 
+       
+  strcpy(ptr_arr_mqtt_text, "123");
+  const char *const_ptr_arr_mqtt_text = ptr_arr_mqtt_text; 
+  mqtt_send(const_ptr_arr_mqtt_text);
 
   //-----
   // Write current connection info back to RTC
@@ -282,6 +290,4 @@ else {
 }
 
 void loop() {
-  //ArduinoOTA.handle();
-  //mqtt_client.loop();
 }
