@@ -31,7 +31,6 @@ void mqtt_reconnect()
           sprintf(msg, "Hello World!");
           mqtt_client.publish(MQTT_DEBUG_TOPIC, msg);
             mqtt_client.loop();
-
           Serial.println("Published test message");
         #endif  
 
@@ -42,6 +41,17 @@ void mqtt_reconnect()
       delay(5000);
     }
   }
+}
+void mqtt_send(const char *txt)
+{
+  #ifdef DEBUG  
+    Serial.print("Send via Mqtt: ");
+    Serial.print(txt);
+  #endif
+  mqtt_client.publish(MQTT_STATUS_TOPIC, txt);
+  mqtt_client.loop();
+  delay(5);
+
 }
 void mqtt_test()
 {

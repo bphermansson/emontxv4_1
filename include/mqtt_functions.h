@@ -8,5 +8,6 @@
     //#define MQTT_PUB_TEST  "MQTT TEST"
     void mqtt_init();
     void mqtt_reconnect();
+    void mqtt_send(const char *txt);
     void mqtt_test();
 #endif

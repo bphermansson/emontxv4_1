@@ -13,4 +13,7 @@
         float uvlight_sensor_voltage;
         float battery_current;           // Charge or disharge
     } advalues;
+
+
+
 #endif
