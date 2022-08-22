@@ -1,7 +1,7 @@
 #ifndef EMONTXV3_H_INCLUDED
 #define EMONTXV3_H_INCLUDED
     #include <ArduinoJson.h>
-    #define MY_JSON_OBJECT_SIZE 100
+    #define MY_JSON_OBJECT_SIZE 250
     
     #include <ESP8266WiFi.h>
     #include <PubSubClient.h>

@@ -81,17 +81,9 @@ void setup() {
     Serial.begin(115200);
   #endif
 
-  //char wd[100];
-  //connectWifi(wd);
-
   #ifdef DEBUG
     Serial.printf("\n---emontxv4_1---\n\n");
-
     i2cscan(SDAPIN, SCLPIN);
-
-   // Serial.print(F("Wifi connected, IP address: "));
-   // Serial.println(wd);
-
   #endif
 
   if (!ads.begin()) {
@@ -186,10 +178,10 @@ void setup() {
   #endif
 
 
-  StaticJsonDocument<96> doc;
+  StaticJsonDocument<196> doc;
   doc["bmp_temp"] = temppresPtr->temp;
   doc["bmp_air_pressure"] = temppresPtr->pressure;
-  doc["Light"] = ptr_lux;
+  doc["Light"] = *ptr_lux;
   doc["htu_temp"] = temphumPtr->temp;
   doc["htu_hum"] = temphumPtr->humidity;
   doc["battery_voltage"] = adPtr->battery_voltage;
